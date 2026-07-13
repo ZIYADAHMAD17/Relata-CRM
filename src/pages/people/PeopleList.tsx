@@ -31,7 +31,7 @@ const PeopleList = () => {
   };
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [formData, setFormData] = useState({ name: '', role: '', company: '', email: '' });
+  const [formData, setFormData] = useState({ name: '', role: '', company: '', email: '', avatar: '' });
 
   useEffect(() => {
     fetchPeople();
@@ -56,11 +56,11 @@ const PeopleList = () => {
         ...formData,
         score: Math.floor(Math.random() * 100),
         status: 'Good',
-        avatar: `https://i.pravatar.cc/150?u=${formData.email}`,
+        avatar: formData.avatar || `https://i.pravatar.cc/150?u=${formData.email}`,
       };
       await createPerson(newPerson);
       setIsDialogOpen(false);
-      setFormData({ name: '', role: '', company: '', email: '' });
+      setFormData({ name: '', role: '', company: '', email: '', avatar: '' });
       fetchPeople();
     } catch (error: any) {
       console.error(error);
@@ -131,6 +131,10 @@ const PeopleList = () => {
               <div className="flex flex-col gap-2">
                 <Label htmlFor="company">Company</Label>
                 <Input id="company" value={formData.company} onChange={e => setFormData({...formData, company: e.target.value})} placeholder="Acme Corp" />
+              </div>
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="avatar">Profile Picture URL (Optional)</Label>
+                <Input id="avatar" value={formData.avatar} onChange={e => setFormData({...formData, avatar: e.target.value})} placeholder="https://example.com/photo.jpg" />
               </div>
               <Button type="submit" className="mt-4">Save Person</Button>
             </form>

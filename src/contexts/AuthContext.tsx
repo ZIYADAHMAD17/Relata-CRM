@@ -14,6 +14,7 @@ interface AuthContextType {
   user: AppUser | null;
   login: (email: string, password: string) => Promise<{ error?: string }>;
   logout: () => void;
+  updateUser: (updates: Partial<AppUser>) => void;
   isAuthenticated: boolean;
 }
 
@@ -21,6 +22,7 @@ const AuthContext = createContext<AuthContextType>({
   user: null,
   login: async () => ({}),
   logout: () => {},
+  updateUser: () => {},
   isAuthenticated: false,
 });
 
@@ -83,8 +85,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     localStorage.removeItem('relata_user');
   };
 
+  const updateUser = (updates: Partial<AppUser>) => {
+    if (user) {
+      const updatedUser = { ...user, ...updates };
+      setUser(updatedUser);
+      localStorage.setItem('relata_user', JSON.stringify(updatedUser));
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, logout, isAuthenticated: !!user }}>
+    <AuthContext.Provider value={{ user, login, logout, updateUser, isAuthenticated: !!user }}>
       {children}
     </AuthContext.Provider>
   );

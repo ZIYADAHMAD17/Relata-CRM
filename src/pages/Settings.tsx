@@ -21,7 +21,7 @@ const settingsNav = [
 const Settings = () => {
   const [activeTab, setActiveTab] = useState('profile');
   const { theme, setTheme } = useTheme();
-  const { user, logout } = useAuth();
+  const { user, logout, updateUser } = useAuth();
   const navigate = useNavigate();
   const [toast, setToast] = useState<string | null>(null);
 
@@ -30,6 +30,7 @@ const Settings = () => {
     name: user?.name || '',
     email: user?.email || '',
     bio: 'Building better professional relationships with Relata.',
+    avatar: user?.avatar || '',
   });
 
   // Security form
@@ -57,10 +58,7 @@ const Settings = () => {
 
   const handleSaveProfile = (e: React.FormEvent) => {
     e.preventDefault();
-    // Update display name in localStorage session
-    const savedUser = JSON.parse(localStorage.getItem('relata_user') || '{}');
-    const updatedUser = { ...savedUser, name: profileForm.name, email: profileForm.email };
-    localStorage.setItem('relata_user', JSON.stringify(updatedUser));
+    updateUser({ name: profileForm.name, email: profileForm.email, avatar: profileForm.avatar });
     showToast('Profile saved successfully! ✓');
   };
 
@@ -132,7 +130,13 @@ const Settings = () => {
               <div className="flex flex-col gap-1">
                 <p className="font-semibold">{user?.name}</p>
                 <p className="text-sm text-muted-foreground capitalize">{user?.role} Account</p>
-                <Button size="sm" variant="outline" className="rounded-full h-8 w-fit mt-1 bg-card/50 border-border/50 text-xs">
+                <Button size="sm" variant="outline" className="rounded-full h-8 w-fit mt-1 bg-card/50 border-border/50 text-xs" onClick={() => {
+                  const url = window.prompt("Enter avatar image URL (e.g., https://example.com/photo.jpg)");
+                  if (url) {
+                    setProfileForm({ ...profileForm, avatar: url });
+                    updateUser({ avatar: url });
+                  }
+                }}>
                   <Camera className="w-3.5 h-3.5 mr-2" />
                   Change Photo
                 </Button>
