@@ -20,6 +20,13 @@ const Organizations = () => {
   const [search, setSearch] = useState('');
   const [orgs, setOrgs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [toast, setToast] = useState<string | null>(null);
+
+  const showToast = (msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 3000);
+  };
+
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [editingOrg, setEditingOrg] = useState<any>(null);
@@ -33,8 +40,9 @@ const Organizations = () => {
     try {
       const data = await getOrganizations();
       setOrgs(data);
-    } catch (error) {
-      console.error('Error fetching orgs:', error);
+    } catch (error: any) {
+      console.error(error);
+      showToast(error.message || 'An error occurred. Please check database permissions.');
     } finally {
       setLoading(false);
     }
@@ -54,8 +62,9 @@ const Organizations = () => {
       setIsCreateOpen(false);
       setFormData({ name: '', industry: '', website: '', location: '' });
       fetchOrgs();
-    } catch (error) {
-      console.error('Error creating org:', error);
+    } catch (error: any) {
+      console.error(error);
+      showToast(error.message || 'An error occurred. Please check database permissions.');
     }
   };
 
@@ -76,8 +85,9 @@ const Organizations = () => {
       });
       setIsEditOpen(false);
       fetchOrgs();
-    } catch (error) {
-      console.error('Error editing org:', error);
+    } catch (error: any) {
+      console.error(error);
+      showToast(error.message || 'An error occurred. Please check database permissions.');
     }
   };
 
@@ -86,8 +96,9 @@ const Organizations = () => {
     try {
       await deleteOrganization(id);
       setOrgs(prev => prev.filter(o => o.id !== id));
-    } catch (error) {
-      console.error('Error deleting org:', error);
+    } catch (error: any) {
+      console.error(error);
+      showToast(error.message || 'An error occurred. Please check database permissions.');
     }
   };
 
@@ -119,6 +130,16 @@ const Organizations = () => {
 
   return (
     <div className="flex flex-col gap-8 pb-20 md:pb-0 max-w-6xl mx-auto h-full">
+      {toast && (
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="fixed top-6 right-6 z-50 bg-danger/90 text-white border border-danger shadow-xl rounded-xl px-5 py-3 text-sm font-medium"
+        >
+          {toast}
+        </motion.div>
+      )}
+
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}

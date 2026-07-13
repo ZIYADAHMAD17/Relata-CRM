@@ -41,8 +41,9 @@ const Documents = () => {
     try {
       const data = await getDocuments();
       setDocuments(data);
-    } catch (error) {
-      console.error('Error fetching documents:', error);
+    } catch (error: any) {
+      console.error(error);
+      showToast(error.message || 'An error occurred. Please check database permissions.');
     } finally {
       setLoading(false);
     }
@@ -59,8 +60,9 @@ const Documents = () => {
       setIsDialogOpen(false);
       setFormData({ name: '', type: 'file' });
       fetchDocuments();
-    } catch (error) {
-      console.error('Error creating document:', error);
+    } catch (error: any) {
+      console.error(error);
+      showToast(error.message || 'An error occurred. Please check database permissions.');
     }
   };
 
@@ -69,8 +71,9 @@ const Documents = () => {
     try {
       await deleteDocument(id);
       setDocuments(prev => prev.filter(d => d.id !== id));
-    } catch (error) {
-      console.error('Error deleting document:', error);
+    } catch (error: any) {
+      console.error(error);
+      showToast(error.message || 'An error occurred. Please check database permissions.');
     }
   };
 
@@ -85,8 +88,9 @@ const Documents = () => {
       await updateDocument(id, { name: renameValue.trim() });
       setDocuments(prev => prev.map(d => d.id === id ? { ...d, name: renameValue.trim() } : d));
       setRenamingId(null);
-    } catch (error) {
-      console.error('Error renaming:', error);
+    } catch (error: any) {
+      console.error(error);
+      showToast(error.message || 'An error occurred. Please check database permissions.');
     }
   };
 

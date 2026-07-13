@@ -17,6 +17,13 @@ const PersonProfile = () => {
   const { id } = useParams<{ id: string }>();
   const [person, setPerson] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [toast, setToast] = useState<string | null>(null);
+
+  const showToast = (msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 3000);
+  };
+
   const [timeline, setTimeline] = useState<any[]>([]);
 
   // Dialog states
@@ -126,8 +133,9 @@ const PersonProfile = () => {
 
       items.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
       setTimeline(items);
-    } catch (e) {
-      console.error('Error loading profile data:', e);
+    } catch (e: any) {
+      console.error(e);
+      showToast(e.message || 'An error occurred. Please check database permissions.');
     } finally {
       setLoading(false);
     }
@@ -156,8 +164,9 @@ const PersonProfile = () => {
       setPerson(updatedPerson);
       setIsEditOpen(false);
       loadAllData();
-    } catch (e) {
-      console.error('Error saving profile:', e);
+    } catch (e: any) {
+      console.error(e);
+      showToast(e.message || 'An error occurred. Please check database permissions.');
     }
   };
 
@@ -178,8 +187,9 @@ const PersonProfile = () => {
       setIsScheduleOpen(false);
       setMeetForm({ title: '', date: '', time: '', location: '', type: 'video' });
       loadAllData();
-    } catch (e) {
-      console.error('Error scheduling meeting:', e);
+    } catch (e: any) {
+      console.error(e);
+      showToast(e.message || 'An error occurred. Please check database permissions.');
     }
   };
 
@@ -202,8 +212,9 @@ const PersonProfile = () => {
       setIsLogOpen(false);
       setLogForm({ title: '', date: '', time: '' });
       loadAllData();
-    } catch (e) {
-      console.error('Error logging meeting:', e);
+    } catch (e: any) {
+      console.error(e);
+      showToast(e.message || 'An error occurred. Please check database permissions.');
     }
   };
 
@@ -215,8 +226,9 @@ const PersonProfile = () => {
       setNoteText('');
       setIsNoteOpen(false);
       loadAllData();
-    } catch (e) {
-      console.error('Error adding note:', e);
+    } catch (e: any) {
+      console.error(e);
+      showToast(e.message || 'An error occurred. Please check database permissions.');
     }
   };
 
@@ -224,14 +236,25 @@ const PersonProfile = () => {
     try {
       await deleteNote(noteId);
       loadAllData();
-    } catch (e) {
-      console.error('Error deleting note:', e);
+    } catch (e: any) {
+      console.error(e);
+      showToast(e.message || 'An error occurred. Please check database permissions.');
     }
   };
 
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full min-h-[400px]">
+      {toast && (
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="fixed top-6 right-6 z-50 bg-danger/90 text-white border border-danger shadow-xl rounded-xl px-5 py-3 text-sm font-medium"
+        >
+          {toast}
+        </motion.div>
+      )}
+
         <div className="text-muted-foreground">Loading profile...</div>
       </div>
     );

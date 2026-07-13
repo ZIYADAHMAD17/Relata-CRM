@@ -33,8 +33,9 @@ const Meetings = () => {
     try {
       const data = await getMeetings();
       setMeetings(data);
-    } catch (error) {
-      console.error('Error fetching meetings:', error);
+    } catch (error: any) {
+      console.error(error);
+      showToast(error.message || 'An error occurred. Please check database permissions.');
     } finally {
       setLoading(false);
     }
@@ -48,8 +49,9 @@ const Meetings = () => {
       setIsDialogOpen(false);
       setFormData({ title: '', date: '', time: '', type: 'video', location: '', priority: 'Medium' });
       fetchMeetings();
-    } catch (error) {
-      console.error('Error creating meeting:', error);
+    } catch (error: any) {
+      console.error(error);
+      showToast(error.message || 'An error occurred. Please check database permissions.');
     }
   };
 
@@ -57,8 +59,9 @@ const Meetings = () => {
     try {
       await updateMeeting(meetingId, { status: 'Attended' });
       setMeetings(prev => prev.map(m => m.id === meetingId ? { ...m, status: 'Attended' } : m));
-    } catch (error) {
-      console.error('Error marking attended:', error);
+    } catch (error: any) {
+      console.error(error);
+      showToast(error.message || 'An error occurred. Please check database permissions.');
     }
   };
 
@@ -67,8 +70,9 @@ const Meetings = () => {
     try {
       await deleteMeeting(id);
       setMeetings(prev => prev.filter(m => m.id !== id));
-    } catch (error) {
-      console.error('Error deleting meeting:', error);
+    } catch (error: any) {
+      console.error(error);
+      showToast(error.message || 'An error occurred. Please check database permissions.');
     }
   };
 
@@ -91,8 +95,9 @@ const Meetings = () => {
       });
       setIsEditOpen(false);
       fetchMeetings();
-    } catch (error) {
-      console.error('Error editing meeting:', error);
+    } catch (error: any) {
+      console.error(error);
+      showToast(error.message || 'An error occurred. Please check database permissions.');
     }
   };
 

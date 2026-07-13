@@ -23,6 +23,13 @@ const PeopleList = () => {
   const [search, setSearch] = useState('');
   const [people, setPeople] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [toast, setToast] = useState<string | null>(null);
+
+  const showToast = (msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 3000);
+  };
+
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [formData, setFormData] = useState({ name: '', role: '', company: '', email: '' });
 
@@ -34,8 +41,9 @@ const PeopleList = () => {
     try {
       const data = await getPeople();
       setPeople(data);
-    } catch (error) {
-      console.error('Error fetching people:', error);
+    } catch (error: any) {
+      console.error(error);
+      showToast(error.message || 'An error occurred. Please check database permissions.');
     } finally {
       setLoading(false);
     }
@@ -54,8 +62,9 @@ const PeopleList = () => {
       setIsDialogOpen(false);
       setFormData({ name: '', role: '', company: '', email: '' });
       fetchPeople();
-    } catch (error) {
-      console.error('Error creating person:', error);
+    } catch (error: any) {
+      console.error(error);
+      showToast(error.message || 'An error occurred. Please check database permissions.');
     }
   };
   const handleDeletePerson = async (id: string, name: string) => {
@@ -63,9 +72,10 @@ const PeopleList = () => {
       try {
         await deletePerson(id);
         fetchPeople();
-      } catch (error) {
-        console.error('Error deleting person:', error);
-      }
+      } catch (error: any) {
+      console.error(error);
+      showToast(error.message || 'An error occurred. Please check database permissions.');
+    }
     }
   };
 
@@ -73,6 +83,16 @@ const PeopleList = () => {
 
   return (
     <div className="flex flex-col gap-8 pb-20 md:pb-0 h-full">
+      {toast && (
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="fixed top-6 right-6 z-50 bg-danger/90 text-white border border-danger shadow-xl rounded-xl px-5 py-3 text-sm font-medium"
+        >
+          {toast}
+        </motion.div>
+      )}
+
       {/* Header */}
       <motion.div 
         initial={{ opacity: 0, y: -10 }}

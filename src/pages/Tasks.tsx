@@ -27,6 +27,13 @@ const emptyForm = { title: '', dueDate: '', priority: 'Medium', status: 'To Do',
 const Tasks = () => {
   const [tasks, setTasks] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [toast, setToast] = useState<string | null>(null);
+
+  const showToast = (msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 3000);
+  };
+
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<any>(null);
@@ -43,8 +50,9 @@ const Tasks = () => {
     try {
       const data = await getTasks();
       setTasks(data);
-    } catch (error) {
-      console.error('Error fetching tasks:', error);
+    } catch (error: any) {
+      console.error(error);
+      showToast(error.message || 'An error occurred. Please check database permissions.');
     } finally {
       setLoading(false);
     }
@@ -57,8 +65,9 @@ const Tasks = () => {
       setIsCreateOpen(false);
       setFormData({ ...emptyForm });
       fetchTasks();
-    } catch (error) {
-      console.error('Error creating task:', error);
+    } catch (error: any) {
+      console.error(error);
+      showToast(error.message || 'An error occurred. Please check database permissions.');
     }
   };
 
@@ -66,8 +75,9 @@ const Tasks = () => {
     try {
       await updateTask(taskId, { status: 'Completed' });
       setTasks(prev => prev.map(t => t.id === taskId ? { ...t, status: 'Completed' } : t));
-    } catch (error) {
-      console.error('Error marking task complete:', error);
+    } catch (error: any) {
+      console.error(error);
+      showToast(error.message || 'An error occurred. Please check database permissions.');
     }
   };
 
@@ -76,8 +86,9 @@ const Tasks = () => {
     try {
       await deleteTask(id);
       setTasks(prev => prev.filter(t => t.id !== id));
-    } catch (error) {
-      console.error('Error deleting task:', error);
+    } catch (error: any) {
+      console.error(error);
+      showToast(error.message || 'An error occurred. Please check database permissions.');
     }
   };
 
@@ -99,8 +110,9 @@ const Tasks = () => {
       });
       setIsEditOpen(false);
       fetchTasks();
-    } catch (error) {
-      console.error('Error editing task:', error);
+    } catch (error: any) {
+      console.error(error);
+      showToast(error.message || 'An error occurred. Please check database permissions.');
     }
   };
 
@@ -143,6 +155,16 @@ const Tasks = () => {
 
   return (
     <div className="flex flex-col gap-8 h-full">
+      {toast && (
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="fixed top-6 right-6 z-50 bg-danger/90 text-white border border-danger shadow-xl rounded-xl px-5 py-3 text-sm font-medium"
+        >
+          {toast}
+        </motion.div>
+      )}
+
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}

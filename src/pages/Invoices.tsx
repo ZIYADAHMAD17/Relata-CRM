@@ -38,8 +38,9 @@ const Invoices = () => {
     try {
       const data = await getInvoices();
       setInvoices(data);
-    } catch (error) {
-      console.error('Error fetching invoices:', error);
+    } catch (error: any) {
+      console.error(error);
+      showToast(error.message || 'An error occurred. Please check database permissions.');
     } finally {
       setLoading(false);
     }
@@ -59,8 +60,9 @@ const Invoices = () => {
       setIsDialogOpen(false);
       setFormData({ client_name: '', amount: '', due_date: '', status: 'Pending' });
       fetchInvoices();
-    } catch (error) {
-      console.error('Error creating invoice:', error);
+    } catch (error: any) {
+      console.error(error);
+      showToast(error.message || 'An error occurred. Please check database permissions.');
     }
   };
 
@@ -69,8 +71,9 @@ const Invoices = () => {
     try {
       await updateInvoice(id, { status: newStatus });
       setInvoices(prev => prev.map(inv => inv.id === id ? { ...inv, status: newStatus } : inv));
-    } catch (error) {
-      console.error('Error updating invoice status:', error);
+    } catch (error: any) {
+      console.error(error);
+      showToast(error.message || 'An error occurred. Please check database permissions.');
     }
   };
 
@@ -79,8 +82,9 @@ const Invoices = () => {
     try {
       await deleteInvoice(id);
       setInvoices(prev => prev.filter(inv => inv.id !== id));
-    } catch (error) {
-      console.error('Error deleting invoice:', error);
+    } catch (error: any) {
+      console.error(error);
+      showToast(error.message || 'An error occurred. Please check database permissions.');
     }
   };
 
