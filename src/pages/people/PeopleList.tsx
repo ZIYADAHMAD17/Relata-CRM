@@ -5,8 +5,9 @@ import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Plus, Search, Filter, MoreHorizontal, Mail, Phone, ExternalLink, Activity } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { getPeople, createPerson } from '@/services/api';
+import { getPeople, createPerson, deletePerson } from '@/services/api';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Label } from '@/components/ui/label';
 
 const getStatusColor = (status: string) => {
@@ -55,6 +56,16 @@ const PeopleList = () => {
       fetchPeople();
     } catch (error) {
       console.error('Error creating person:', error);
+    }
+  };
+  const handleDeletePerson = async (id: string, name: string) => {
+    if (window.confirm(`Are you sure you want to delete ${name}?`)) {
+      try {
+        await deletePerson(id);
+        fetchPeople();
+      } catch (error) {
+        console.error('Error deleting person:', error);
+      }
     }
   };
 
@@ -155,9 +166,21 @@ const PeopleList = () => {
                       <p className="text-sm text-muted-foreground line-clamp-1">{person.role} at {person.company}</p>
                     </div>
                   </div>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-foreground hover:bg-muted">
-                    <MoreHorizontal className="w-4 h-4" />
-                  </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-foreground hover:bg-muted">
+                        <MoreHorizontal className="w-4 h-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem asChild>
+                        <Link to={`/people/${person.id}`}>View Profile</Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleDeletePerson(person.id, person.name)} className="text-danger focus:text-danger cursor-pointer">
+                        Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
 
                 <div className="flex items-center gap-2 mt-2">

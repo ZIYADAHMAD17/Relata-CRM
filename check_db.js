@@ -5,13 +5,13 @@ const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 async function check() {
-  console.log('Testing connection to Supabase...');
-  const { data, error } = await supabase.from('people').select('*').limit(1);
+  console.log('Testing column existence...');
+  const { data, error } = await supabase.from('people').select('id, name, phone, location, tags, website, linkedin, birthday').limit(1);
   if (error) {
-    console.error('Connection failed:', error.message);
-    process.exit(1);
+    console.log('Error querying columns:', error.message);
+  } else {
+    console.log('Columns exist! Data:', data);
   }
-  console.log('Successfully connected! People table exists.');
 }
 
 check();
