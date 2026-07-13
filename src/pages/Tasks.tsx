@@ -22,7 +22,7 @@ const getPriorityColor = (priority: string) => {
   }
 };
 
-const emptyForm = { title: '', dueDate: '', priority: 'Medium', status: 'To Do', assignee: '' };
+const emptyForm = { title: '', due_date: '', priority: 'Medium', status: 'To Do', assignee: '' };
 
 const Tasks = () => {
   const [tasks, setTasks] = useState<any[]>([]);
@@ -103,7 +103,7 @@ const Tasks = () => {
     try {
       await updateTask(editingTask.id, {
         title: editingTask.title,
-        dueDate: editingTask.dueDate,
+        due_date: editingTask.due_date,
         priority: editingTask.priority,
         status: editingTask.status,
         assignee: editingTask.assignee,
@@ -125,7 +125,7 @@ const Tasks = () => {
       <div className="grid grid-cols-2 gap-4">
         <div className="flex flex-col gap-2">
           <Label>Due Date</Label>
-          <Input type="date" value={data.dueDate} onChange={e => onChange({ ...data, dueDate: e.target.value })} />
+          <Input type="date" value={data.due_date} onChange={e => onChange({ ...data, due_date: e.target.value })} />
         </div>
         <div className="flex flex-col gap-2">
           <Label>Assignee</Label>
@@ -238,7 +238,7 @@ const Tasks = () => {
                       <div className={`w-2 h-2 rounded-full shrink-0 ${priority === 'High' ? 'bg-danger' : priority === 'Medium' ? 'bg-warning' : 'bg-success'}`} />
                       <div className="flex-1 min-w-0">
                         <p className="font-medium text-sm truncate">{task.title}</p>
-                        <p className="text-xs text-muted-foreground">{task.assignee || 'Unassigned'} · Due {task.dueDate || 'No date'}</p>
+                        <p className="text-xs text-muted-foreground">{task.assignee || 'Unassigned'} · Due {task.due_date || 'No date'}</p>
                       </div>
                       <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded border ${getPriorityColor(task.priority)}`}>{task.status}</span>
                       {!isEmployee && (
@@ -344,8 +344,8 @@ const Tasks = () => {
                               )}
                               <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                                 <Clock className="w-3.5 h-3.5" />
-                                <span className={task.dueDate === 'Today' || task.dueDate === 'Tomorrow' ? 'text-warning font-medium' : ''}>
-                                  {task.dueDate || 'No date'}
+                                <span className={task.due_date === 'Today' || task.due_date === 'Tomorrow' ? 'text-warning font-medium' : ''}>
+                                  {task.due_date || 'No date'}
                                 </span>
                               </div>
                             </div>
